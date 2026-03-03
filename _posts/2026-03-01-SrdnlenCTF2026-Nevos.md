@@ -188,7 +188,6 @@ I looked this up online and it says:
 
 Because the regex for the interalProxies was simply ".\*", it trusts *any* proxy IP since it just matches everything. It also says the *"remoteIpHeader"* is **X-Access-Manager** instead of the standard *"X-Forwarded-For"*. So as I understood it, it's a custom header and Tomcat was configured to trust that header. Additionally, the earlier mentioned "403 page" said something about using a browser that runs on the same machine as Tomcat, i.e. **localhost**. So sending the localhost IP with that trusted header, should allow us to bypass the restriction.
 
----
 
 ### Step 6 - Access Tomcat Manager and finding the flag
 I combined everything into a single request:
