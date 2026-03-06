@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Srdnlen CTF 2026 - Double Shop (PWN)
+title: Srdnlen CTF 2026 - Double Shop (WEB)
 date: 2026-02-28
 description: How the "Double Shop" challenge was solved at the Srdnlen CTF 2026 Quals event.
-tags: writeups pwn
-categories: writeups pwn
+tags: writeups web
+categories: writeups web
 author: "Nevos"
 featured: false
 ---
