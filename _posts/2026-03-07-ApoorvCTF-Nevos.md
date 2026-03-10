@@ -15,11 +15,11 @@ author: "Nevos"
 - **Category:** Forensics
 - **Difficulty** Medium
 - **Description:**  
-*Routine system checks were performed on the city’s communication network after reports of instability.
-Operators sent brief messages between nodes to confirm everything was running smoothly.
-Most of the exchanges are ordinary status updates, but one message stands out as… different.*
- - **Provided Files:** `challenge.pcap`
- - **Flag Format:** `apoorvctf{...}`
+  _Routine system checks were performed on the city’s communication network after reports of instability.
+  Operators sent brief messages between nodes to confirm everything was running smoothly.
+  Most of the exchanges are ordinary status updates, but one message stands out as… different._
+- **Provided Files:** `challenge.pcap`
+- **Flag Format:** `apoorvctf{...}`
 
 ## Goal
 
@@ -27,7 +27,7 @@ Analyze the provided PCAP capture file, identify the strange message in the traf
 
 ## Initial Analysis
 
-This being a `.pcap` containing packet capture and the description mentioning an *unusual* message, I figured that among the traffic, there would have to be something that stands out from the rest. I had no idea what exactly to look for yet though.  
+This being a `.pcap` containing packet capture and the description mentioning an _unusual_ message, I figured that among the traffic, there would have to be something that stands out from the rest. I had no idea what exactly to look for yet though.  
 The file contained 1368 TCP packets, all on localhost (`127.0.0.1`). The used ports ranged from 5000 - 5069.
 
 Some of those carry human-readable text payload. There are exactly 8 unique messages that repeat across some of the connections:
@@ -41,7 +41,7 @@ Some of those carry human-readable text payload. There are exactly 8 unique mess
 7. `Network latency seems stable.`
 8. `Backup completed successfully.`
 
-These are the *ordinary status updates* from the description.
+These are the _ordinary status updates_ from the description.
 
 ### Tools Used
 
@@ -58,12 +58,14 @@ These are the *ordinary status updates* from the description.
 To get an overview of the type of payload, I simply scrolled through the packets and checked the payload but didn't really see anything that stood out. There were the above mentioned messages and otherwise just seemingly random noise.  
 As mentioned, they were also all TCP packets, always same source and destination, namely localhost and nothing else looking strange, at least at a quick glance. There were simply too many packets to closely inspect each one.
 
-![ws_content_excerpt.png](../../../assets/img/posts/2026-03-07-routine-checks/ws_content_excerpt.png)
+{% include figure.liquid loading="eager" path="assets/img/posts/2026-03-07-routine-checks/ws_content_excerpt.png"
+class="img-fluid rounded z-depth-1" max_width="500px" zoomable=true %}
 
 I tried out different things, like filters, string searches for anything unusual but nothing turned up.  
 After some trial and error, I did a rather obvious and simple thing, I checked the lengths of the streams by sorting by length and saw that one stream to **port 5001** looked very suspicious. Instead of a short text message, it transmits a single large payload of **5688 bytes**.
 
-![ws_sorted_by_size.png](../../../assets/img/posts/2026-03-07-routine-checks/ws_sorted_by_size.png)
+{% include figure.liquid loading="eager" path="assets/img/posts/2026-03-07-routine-checks/ws_sorted_by_size.png"
+class="img-fluid rounded z-depth-1" max_width="500px" zoomable=true%}
 
 ## Step 2: File Payload Check
 
@@ -93,7 +95,7 @@ So it had been (intentionally) corrupted but it was an easy fix. I used a hex ed
 ## Step 4: Using the QR Code
 
 This got me very excited of course, thinking I got the solution.  
-Scanning the code either with a phone or some other tool like `zbarimg`, reveals what looks like a flag, but submitting it returns **incorrect**. Not that surprising considering the text of the flag *this_aint_it_brother*:
+Scanning the code either with a phone or some other tool like `zbarimg`, reveals what looks like a flag, but submitting it returns **incorrect**. Not that surprising considering the text of the flag _this_aint_it_brother_:
 
 ![fake_flag.png](../../../assets/img/posts/2026-03-07-routine-checks/fake_flag.png)
 
@@ -101,7 +103,7 @@ Rather disappointing. What cost me a lot of time now, was trying to figure out w
 
 ### Various Dead Ends
 
-Thinking this current path was just a trick and would lead nowhere, I first moved away from the image and went back to Wireshark, to try and find unusual aspects in the:  
+Thinking this current path was just a trick and would lead nowhere, I first moved away from the image and went back to Wireshark, to try and find unusual aspects in the:
 
 - messages like patterns etc.
 - TCP headers
@@ -113,7 +115,7 @@ The image itself was pretty unremarkable, just containing black and white colour
 - changing contrast
 - enlarging it
 
-Nothing really fruitful came from that. So I started to think that it wasn't something *on* the image but rather *inside* of it. 
+Nothing really fruitful came from that. So I started to think that it wasn't something _on_ the image but rather _inside_ of it.
 
 ## Step 5: Finding the Real Flag
 
@@ -127,7 +129,7 @@ It asked for a password but I didn't enter anything and that was accepted. This 
 
 ![real_flag_file.png](../../../assets/img/posts/2026-03-07-routine-checks/real_flag_file.png)
 
-This time it wasn't even some kind of trick. Opening the text revealed the actual flag: 
+This time it wasn't even some kind of trick. Opening the text revealed the actual flag:
 
 ![flag.png](../../../assets/img/posts/2026-03-07-routine-checks/flag.png)
 

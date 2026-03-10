@@ -17,11 +17,11 @@ yourself later on and for others learning from your work.
 
 ## Template Structure
 
-- Template Header. Use the following YAML preamble at the top of your write-up to provide metadata about the challenge 
-for the website to display correctly. This includes the title, date, description, tags, and categories. Adjust the 
-fields as needed for each write-up and fill in the placeholders with the appropriate information for each challenge.
-````markdown
+- Template Header. Use the following YAML preamble at the top of your write-up to provide metadata about the challenge
+  for the website to display correctly. This includes the title, date, description, tags, and categories. Adjust the
+  fields as needed for each write-up and fill in the placeholders with the appropriate information for each challenge.
 
+```markdown
 ---
 layout: post
 title: ADD TITLE HERE
@@ -31,8 +31,8 @@ tags: writeups <ADD_CATEGORY_TAG_HERE> <ADD_CTF_NAME_TAG_HERE>
 categories: writeups <ADD_CATEGORY_HERE>
 author: YOUR_NAME_HERE
 ---
+```
 
-````
 - Challenge Overview
   - **Name of the CTF Event**
   - **Challenge Name**
@@ -53,8 +53,6 @@ author: YOUR_NAME_HERE
   - **Important:** Do not share flags publicly if the CTF rules prohibit it or the event is still running.
   - Flag: `flag{example_flag_here}` with a screenshot of the flag in the terminal or application output.
 - Conclusion: Summarize what you learned from the challenge and any tips for others attempting it.
-
-
 
 ## Examples Writeups:
 

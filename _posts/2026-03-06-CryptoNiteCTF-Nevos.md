@@ -15,7 +15,7 @@ featured: false
 - **Challenge Name:** Mustard and Mangoes
 - **Category:** Forensics / Steganography
 - **Points earned:** 200
-- **Description:** *A friend of mine recently suffered the 6-7 mango dream and scribbled a lot of 6's and 7's. But even when I pictured what he wanted to say, something seemed incomplete. Almost left out on purpose.*
+- **Description:** _A friend of mine recently suffered the 6-7 mango dream and scribbled a lot of 6's and 7's. But even when I pictured what he wanted to say, something seemed incomplete. Almost left out on purpose._
 - **Provided Files / URL:** Mangoes_and_Mustard.txt
 - **Flag Format**: `TACHYON{...}`
 
@@ -23,19 +23,18 @@ featured: false
 
 The objective was to recover the flag in the format `TACHYON{...}` from the provided challenge file.
 
-
-
 ## Initial Analysis
 
 I will preface this with me never having done a steganography CTF before, so a lot here I had to look up to find out how to best tackle it, even if it might not come across like that in the solution description.
 
 The first thing I did of course was to open the provided text file. It was relatively big for a text file at around 11 MB. As for the content, it consists entirely of the digits `6` and `7`. No other characters are present — no spaces, no newlines, no letters.  
 Not having any idea what to do, I looked up what typical steganography CTF tend to do. Turns out, it's hiding data in files, though usually not in a way you would expect it to.  
-Eventually, I came to the correct conclusion that the `6` and `7` are a binary encoding: 
-- `6` -> `0`  
+Eventually, I came to the correct conclusion that the `6` and `7` are a binary encoding:
+
+- `6` -> `0`
 - `7` -> `1`
 
-The description also uses the workd *picture*, a common file to use in steganography.
+The description also uses the workd _picture_, a common file to use in steganography.
 
 ### Tools used during reconnaissance
 
@@ -70,11 +69,12 @@ with open('decoded.png', 'wb') as f:
 
 The output begins with the bytes `89 50 4E 47 0D 0A 1A 0A` — a proper PNG signature. Opening it shows the Manhattan skyline at night. No flag is visible anywhere in the image.
 
-![decoded.png](../../../assets/img/posts/2026-03-06-mustard-and-mangoes/decoded.png)
+{% include figure.liquid loading="eager" path="assets/img/posts/2026-03-06-mustard-and-mangoes/decoded.png"
+class="img-fluid rounded z-depth-1" max_width="500px"%}
 
 ## Step 2: Investigate the PNG
 
-I couldn't find anything *on* the image, so I decided to check if there is anything  *inside*.
+I couldn't find anything _on_ the image, so I decided to check if there is anything _inside_.
 
 ### Metadata checks
 
@@ -145,7 +145,7 @@ I tried various other commands with `zsteg` and also other tools such as `binwal
 ## Step 4: Re-read the challenge description carefully
 
 I went back to the description:
-*"But even when I pictured what he wanted to say, something seemed **incomplete***. Almost left out on purpose."*
+\*"But even when I pictured what he wanted to say, something seemed **incomplete\***. Almost left out on purpose."\*
 
 So instead of something being in the image, this suggests that something is **missing** from the image.
 
@@ -195,13 +195,15 @@ Steps:
 
 After patching the header and opening the image again, the **bottom portion of the image became visible**, which contained the flag:
 
-![full_image.png](../../../assets/img/posts/2026-03-06-mustard-and-mangoes/full_image.png)
+{% include figure.liquid loading="eager" path="assets/img/posts/2026-03-06-mustard-and-mangoes/full_image.png"
+class="img-fluid rounded z-depth-1" max_width="500px"%}
 
 ## Conclusion
 
 This challenge combined two types of encoding. The first one was a binary substitution (`6` -> `0`, `7` -> `1`) that created a proper PNG file. The second one was an IHDR height manipulation. The image header was modified to define fewer rows than the compressed pixel stream actually had, making the bottom part invisible to any standard viewer.
 
 ### Tips
+
 - A valid image can still be incomplete if the header dimensions are wrong
 - PNG chunk analysis is an important forensic skill
 - `zsteg`, `binwalk`, and `file` are useful, but they can produce false positives
