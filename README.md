@@ -27,6 +27,15 @@ is a short, descriptive title for the post.
 Images for the post can be added to the `assets` directory, and can be referenced in the markdown file using 
 the path `assets/posts/image.png`.
 
+**Prettier**
+Please run the linter/prettier before submitting your code.
+
+```
+npx prettier --check .
+# Auto-Fix the prettiere issues with this command:
+npx prettier --write .
+```
+
 
 ## Contributing
 
