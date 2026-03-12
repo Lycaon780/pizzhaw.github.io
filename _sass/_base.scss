@@ -633,40 +633,6 @@ footer.sticky-bottom {
     mjx-container[jax="CHTML"][display="true"] {
       display: unset;
     }
-
-    .news-thumb-col {
-      display: flex;
-      justify-content: flex-end;
-      align-items: flex-start;
-    }
-
-    .news-thumb {
-      display: block;
-      width: min(100%, 320px);
-      aspect-ratio: 4 / 3;
-      overflow: hidden;
-      border-radius: 0.25rem;
-    }
-
-    .news-thumb-img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-}
-
-@media (max-width: 575.98px) {
-  .post-list li {
-    .news-thumb-col {
-      justify-content: flex-start;
-      margin-top: 0.75rem;
-    }
-
-    .news-thumb {
-      width: min(100%, 320px);
-    }
   }
 }
 
