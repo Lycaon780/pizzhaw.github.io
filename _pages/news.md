@@ -39,9 +39,9 @@ nav: true
 
         {% if item.thumbnail %}
             </div>
-            <div class="col-sm-3">
-              <a href="{{ item.url | relative_url }}">
-                <img class="card-img" src="{{ item.thumbnail | relative_url }}" style="object-fit: cover; height: 100%" alt="{{ item.title }} thumbnail" loading="lazy">
+            <div class="col-sm-3 news-thumb-col">
+              <a class="news-thumb" href="{{ item.url | relative_url }}">
+                <img class="news-thumb-img" src="{{ item.thumbnail | relative_url }}" alt="{{ item.title }} thumbnail" loading="lazy" decoding="async">
               </a>
             </div>
           </div>
