@@ -19,8 +19,8 @@ author: "Guillaume"
 
 ## Initial Analysis
 
-I started by opening the zip file and by running the docker inside of it. This allowed me to see that they gave me a 
-full copy of the website, so I have all the files I need, especially the backend. I noticed a file name `flag.txt`, with 
+I started by opening the zip file and by running the docker inside of it. This allowed me to see that they gave me a
+full copy of the website, so I have all the files I need, especially the backend. I noticed a file name `flag.txt`, with
 of course not the real flag inside, so I decided to look where this file was called using
 
 ```bash
@@ -80,7 +80,7 @@ mux.HandleFunc("/checkout/{sku}", methodHint(http.MethodPost, nil, func(w http.R
 }))
 ```
 
-showing the different functions being callable through the website API. Here the one that I am looking for will be 
+showing the different functions being callable through the website API. Here the one that I am looking for will be
 callable at `/checkout/vault` or `/checkout/vault-special`
 
 # Solution Path
@@ -103,10 +103,10 @@ if !ok {
 }
 ```
 
-The way to get a session is rather straightforward : we just need to register a new user and then login with the 
+The way to get a session is rather straightforward : we just need to register a new user and then login with the
 credentials of that user.
 
-As we can see with the API, they are just POST requests to `http://fast-and-foodious.ctf.fr13nds.team/register` 
+As we can see with the API, they are just POST requests to `http://fast-and-foodious.ctf.fr13nds.team/register`
 or `http://fast-and-foodious.ctf.fr13nds.team/login` with a JSON containing a username and a password.
 We can now register ourselves by doing :
 
@@ -257,11 +257,11 @@ if strict.Access != "guest" {
 	}
 ```
 
-Here we have two contradictions : we need the `access` field to be `staff` but it can only be `guest` and 
-the `pointer` field should be `internal.kitchen.mode*alpha` (or `internal.*` since there is only one field in `internal`) 
+Here we have two contradictions : we need the `access` field to be `staff` but it can only be `guest` and
+the `pointer` field should be `internal.kitchen.mode*alpha` (or `internal.*` since there is only one field in `internal`)
 but it can only start with `feed.`.
 
-But since the way that the JSON fields are retrieved in `handleCatalog` and `handleProfilePost` is different 
+But since the way that the JSON fields are retrieved in `handleCatalog` and `handleProfilePost` is different
 I thought that maybe they default to a different field if there is a duplicate, so I tried :
 
 ```bash
@@ -310,9 +310,9 @@ if strings.HasPrefix(clean, "/home/ctf/") {
 }
 ```
 
-However, we can see that between the call to `enforceAssetPolicy` and the check of `*sharedErr != nil`, there is 
-a call to `processIntent`, which does nothing but wait a random amount of time. Using the fact that `sharedErr` is 
-a global variable, we can set up a race condition where the value of `*sharedErr` is modified to `nil` by another 
+However, we can see that between the call to `enforceAssetPolicy` and the check of `*sharedErr != nil`, there is
+a call to `processIntent`, which does nothing but wait a random amount of time. Using the fact that `sharedErr` is
+a global variable, we can set up a race condition where the value of `*sharedErr` is modified to `nil` by another
 rightful API call when our call to get the flag is still executing `processIntent`, allowing us to retrieve the flag.
 
 # Exploit
@@ -348,7 +348,7 @@ curl -s -X POST --cookie "session=Bearer.$JWT" http://fast-and-foodious.ctf.fr13
 done
 ```
 
-Finally, we run the second script, and we launch the first one manually a few times before getting a 
+Finally, we run the second script, and we launch the first one manually a few times before getting a
 data race causing the flag to appear:
 
 ```JSON
