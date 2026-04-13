@@ -1,14 +1,12 @@
 ---
 layout: post
-title: ZHAW Pizza Hacking Night
+title: Solving McRonalds, really-secure-application, and haj-in-the-middle at Pizza Hacking Night
 date: 2026-04-10
 description: On-site event report and write-ups of solved challenges.
-tags: writeups on-site web forensics cryptography
+tags: writeups on-site web forensics cryptography pizzahackingnight
 categories: writeups web forensics cryptography
 author: "Anonymous Student"
 ---
-
-## Pizza Hacking Night Experience
 
 ZHAW organised an on-site event about CTFs, with, as the name suggests, free pizza, an expert talk by the events sponsor Orange Cyberdefense, and some CTF challenges by the Swiss Hacking Challenge (SHC) team /mnt/ain.
 
@@ -49,7 +47,7 @@ I then had a look at the source files of the webshop. After studying the `app.py
 
 We don't have enough money to buy the product with ID 5 directly, but since the backend uses the values sent by the frontend, we may be able to change the price of product 5 to be less than the amount of money we have.
 
-The first thing I tried was to change the price in the purchase form on the website. Unfortunately, the webshop checks if the form is tampered with and doesn't allow the values to be changed. I then just tried to order the product, which of course returned an error message stating that I didn't have enough money, but I now had a valid request. I copied the request, changed the price of the product directly in the request body and then sent this new request to the backend. After that I had a look at the "purchases" site where the flag was displayed: `ZHAW{...}`
+The first thing I tried was to change the price in the purchase form on the website. Unfortunately, the webshop checks if the form is tampered with and doesn't allow the values to be changed. I then just tried to order the product, which of course returned an error message stating that I didn't have enough money, but I now had a valid request. I copied the request, changed the price of the product directly in the request body and then sent this new request to the backend. After that, I had a look at the "purchases" site where the flag was displayed: `ZHAW{...}`
 
 ---
 
