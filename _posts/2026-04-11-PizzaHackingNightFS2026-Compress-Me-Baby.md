@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Pizza Hacking Night Spring 2026 - On-site Impressions and Challenge Writeup
+title: Pizza Hacking Night Spring 2026 - On-site Impressions and Challenge Writeup by Nevos
 date: 2026-04-11
 description: Extracting a flag from ZIP metadata using compression ratios instead of breaking encryption
 tags: writeups misc forensics steganography pizzahackingnight
@@ -8,13 +8,15 @@ categories: writeups misc
 author: "Nevos"
 ---
 
-## Event impressions
+This was my first on-site CTF event, held at the Technikum in Winterthur. The main sponsor was Orange Cyberdefense, who gave a talk about their work. The Team /mnt/ain from the Swiss Hacking Challenge was also present; they spoke about their group and CTF events in general, and they were responsible for creating the challenges for this event. As the name suggests, there was free pizza and plenty of goodies for all participants.
 
-This was my first on-site CTF event. The location was the Technikum in Winterthur. It's main sponsor was Orange Cyberdefense who held a talk about what they do. The Team /mnt/ain from Swiss Hacking Challenge was there as well. They also held a talk about their group and CTF events in general. Plus the challenges of this event were created by them. And as the name of the event says, there was free pizza and also goodies for all participants.  
-The presentation from Orange was very interesting and gave a lot of insight into what they do. It particularly showed how similar CTF events are to the 'real thing'. The one from SHC focused on CTFs in general and gave a lot good advice and tips, also just a general overview of the world of CTFs.  
-Apart from the informative presentations, it was quite a different feeling to doing an event on-site vs. the online ones that I've done up until now. The online events always felt more 'laidback' to me but being physically there with all the other participants definitely had more of a competitive feel to me. It was also quite nice being able to directly talk personally with others that are doing the event, instead of just online chats.  
-It's probably not the smarted approach when trying to go for a lot of points but I immediately tried to do some of the more difficult challenges, instead of doing the easier ones first. In the end I only managed to solve two of those before I had to leave. I was stuck on one for quite a while but eventually managed to solve it so I'm quite happy with it, especially since I was able to do it still relatively fast compared to how fast I usually am on online challenges.  
-Overall, it was a great even educational evening, that I enjoyed a lot. Now I really want to go to another on-site CTF event to experience this again.
+The presentation from Orange was very interesting and provided great insight into their operations. It particularly highlighted how similar CTF events are to the "real thing." The SHC presentation focused on the broader world of CTFs, offering excellent advice, tips, and a general overview of the competitive landscape.
+
+Beyond the informative presentations, the atmosphere of an on-site event was quite different from the online ones I have done previously. While online events often feel more "laid-back," being physically present with other participants created a much more competitive feel. It was also great to be able to speak directly with others in person rather than relying solely on online chats.
+
+Though perhaps not the most strategic approach for maximizing points, I immediately dived into the more difficult challenges instead of starting with the easier ones. In the end, I managed to solve two of those before I had to leave. I was stuck on one for a significant amount of time but eventually solved it, which I was very happy about—especially since I finished it relatively quickly compared to my usual pace during online challenges.
+
+Overall, it was an educational and enjoyable evening. I’m definitely looking forward to attending another on-site CTF event soon to experience this again.
 
 Two images I took, first one was during the event, and the second one as I left:
 
@@ -26,13 +28,12 @@ class="img-fluid rounded z-depth-1" max_width="500px" zoomable=true%}
 
 The rest of the writeup is about one of the two challenges I managed to solve there.
 
-## Challenge Overview
+## Compress Me Baby One More Time - Challenge Overview
 
 - **CTF Event:** Pizza Hacking Night - Spring 2026 Edition
 - **Challenge Name:** Compress Me Baby One More Time
 - **Category:** Misc
-- **Description:**  
-  _*zips you*_
+- **Description:** _*zips you*_
 - **Provided Files:** `compress-me-baby-one-more-time_tar.gz`
 - **Flag Format:** `ZHAW{...}`
 
@@ -42,7 +43,7 @@ Figure out what the compressed archive is hiding and extract the flag.
 
 ## Initial Analysis
 
-The challenge name and the description both heavily hint at compression. The name itself, "compress me baby one more time", indicates something being compressed multiple times.The download is a `.tar.gz` archive. Extracting it sjhows a single zip file called `quantum_encryption_2026.zip`:
+The challenge name and the description both heavily hint at compression. The name itself, "compress me baby one more time", indicates something being compressed multiple times.The download is a `.tar.gz` archive. Extracting it shows a single zip file called `quantum_encryption_2026.zip`:
 
 ```bash
 tar xzf compress-me-baby-one-more-time_tar.gz
@@ -74,7 +75,7 @@ $ unzip 000.zip
 
 They're all password-protected. My first thought was to try cracking them.
 
-## Dead End: Password Cracking
+### Dead End: Password Cracking
 
 I spent a lot of time trying to brute-force the passwords. I used `fcrackzip` with both dictionary and brute-force modes. It reported several "possible" passwords for each zip, but every single one of them produced `invalid compressed data to inflate` errors when actually used to extract.
 
@@ -140,9 +141,6 @@ class="img-fluid rounded z-depth-1" max_width="500px" zoomable=true%}
 ```
 ZHAW{wh4t_1n_th3_r4t10??}
 ```
-
-{% include figure.liquid loading="eager" path="assets/img/posts/2026-04-11-compress-me-baby/flag.png"
-class="img-fluid rounded z-depth-1" max_width="500px" zoomable=true%}
 
 ## Conclusion
 
