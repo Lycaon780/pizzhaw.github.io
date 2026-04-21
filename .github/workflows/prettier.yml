@@ -27,8 +27,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
       - name: Install formatter dependencies 💾
-        run: npm install --no-save prettier@3.1.1 @shopify/prettier-plugin-liquid@1.4.0 diff2html-cli@3.4.52
+        run: npm ci --include=dev
       - name: Install Prettier 💾
         run: npx prettier --version
       - name: Prettier Check 🔎
@@ -40,7 +41,7 @@ jobs:
         run: |
           npx prettier . --write
           git diff -- . ':(exclude)package-lock.json' ':(exclude)package.json' > diff.txt
-          npx diff2html-cli -i file -s side -F diff.html -- diff.txt
+          npx --yes diff2html-cli@5.2.15 -i file -s side -F diff.html -- diff.txt
       - name: Upload html diff ⬆️
         id: artifact-upload
         if: ${{ failure() && steps.prettier.conclusion == 'failure' }}
