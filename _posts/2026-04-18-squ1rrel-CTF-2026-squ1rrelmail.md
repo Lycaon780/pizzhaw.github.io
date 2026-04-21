@@ -22,7 +22,7 @@ author: "Anonymous Student"
 {% include figure.liquid loading="eager" path="assets/img/posts/2026-04-18-squ1rrelmail/landingpage.png"
 class="img-fluid rounded z-depth-1" max_width="500px"%}
 
-After opening the challenge website I was greated with the above page. Since it didn't contain any useful information, I had a look at the page's source code. In there I found the following comment:
+After opening the challenge website, I was greeted with the above page. Since it didn't contain any useful information, I had a look at the page's source code. In there I found the following comment:
 
 ```html
 <!-- TODO: disable /login endpoint before public takedown page goes live -->
