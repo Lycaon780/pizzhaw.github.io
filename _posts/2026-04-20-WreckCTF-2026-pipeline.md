@@ -1,7 +1,7 @@
 ---
 layout: post
 title: WreckCTF 2026 - rev/pipeline
-date: 2026-03-24
+date: 2026-04-20
 description: Inversion of various Python functions
 tags: writeups python reverse hash
 categories: writeups reverse
@@ -33,11 +33,11 @@ def _c(f):
     return bytes(x) == _T
 ```
 
-The first `if` is to check is the input is of the form `wreck{...}` and the second one is to assert that the input only contains printable characters. Then comes the interestiong part where the input is modified by the `f` method of every element of `_Q` before beeing compared to `_T`. So to find the flag I just have to reverse the `f` funtion of all of the 12 classes and then recover the flag from `_T`.
+The first `if` is to check if the input is of the form of `wreck{...}` and the second one is to assert that the input only contains printable characters. Then comes the interesting part where the input is modified by the `f` method of every element of `_Q` before being compared to `_T`. So to find the flag, I just have to reverse the `f` function of all of the 12 classes and then recover the flag from `_T`.
 
 ## Trivial reverses
 
-I noticed that the `f` methods of the classes `_0`, `_6` and `_7` are symetrical so I could reverse those with just a call to the `f` method, for exemple :
+I noticed that the `f` methods of the classes `_0`, `_6` and `_7` are symmetrical so I could reverse those with just a call to the `f` method, for exemple :
 
 ```python
 class _0:
@@ -54,7 +54,7 @@ class _0:
 
 ## Basic operations
 
-I then moved on to the classes `_1` and `_2` which are realy similar :
+I then moved on to the classes `_1` and `_2` which are really similar :
 
 ```python
 class _1:
@@ -75,7 +75,7 @@ class _2:
             x[i] = (x[i] - k[i % len(k)]) & 0xFF
 ```
 
-Thoses clases just perform basic addition or substraction before doing `& 0xFF`. This operation allows to keep only the first 8 bits of the result and prevents an overflow in `x[i]` which should contain a single byte only. It is also interesting to note that this is equivalent to doing a modulo 256. So I inverted the additions by doing substractions and vice-versa. For class `_1` this gives :
+Those classes just perform basic addition or substraction before doing `& 0xFF`. This operation allows to keep only the first 8 bits of the result and prevents an overflow in `x[i]` which should contain a single byte only. It is also interesting to note that this is equivalent to doing a modulo 256. So I inverted the additions by doing substractions and vice-versa. For class `_1` this gives :
 
 ```python
 class _1:
@@ -109,7 +109,7 @@ class _3:
             x[i] = ((b << a) | (b >> (8 - a))) & 0xFF
 ```
 
-First of all the `__init__` method enforce that `a` is between 0 and 7. Then the `((b << a) | (b >> (8 - a))) & 0xFF` operation is a way of doing a rotation of bits to the left. To reverse it I just need to do the rotation to the right :
+First of all the `__init__` method enforce that `a` is between 0 and 7. Then the `((b << a) | (b >> (8 - a))) & 0xFF` operation is a way of doing a rotation of bits to the left. To reverse it, I just need to do the rotation to the right :
 
 ```python
 def rev(s, x):
@@ -136,7 +136,7 @@ class _4:
         x[:] = n
 ```
 
-Here the position of the elements of `x` are swaped based on the values the `p` attribute so I jusy have to swap them the other way around to revert the operation :
+Here the position of the elements of `x` are swaped based on the values the `p` attribute so I just have to swap them the other way around to revert the operation :
 
 ```python
 def rev(s, x):
@@ -174,7 +174,7 @@ class _8:
             x[i] ^= x[i - 1]
 ```
 
-To reverse it I just have to perform the same operations but in reverse order :
+To reverse it, I just have to perform the same operations but in reverse order :
 
 ```python
 def rev(s, x):
@@ -199,7 +199,7 @@ class _9:
             x[i] = (x[i] * k[i % len(k)]) & 0xFF
 ```
 
-However the `__init__` method ensure that every element of `k` is odd which in thoses conditions allow the multiplication to be bijective. This property can be quickly tested using the following code :
+However, the `__init__` method ensure that every element of `k` is odd which in those conditions allow the multiplication to be bijective. This property can be quickly tested using the following code :
 
 ```python
 def check(n):
@@ -254,7 +254,7 @@ class _B(_A):
     h = staticmethod(_mh("sha256"))
 ```
 
-Howerver since only three bytes are hashed each time it is possible to store all the possible results on a dictionary to reverse the operation :
+However, since only three bytes are hashed each time it is possible to store all the possible results on a dictionary to reverse the operation :
 
 ```python
 rev_A = {}
@@ -266,7 +266,7 @@ for i in range(256 ** 3):
     rev_A[key] = c
 ```
 
-But this method is not perfect because the lenght of the dictionary afterwards is only `10_606_955` which is far from `256³ = 16_777_216`, so I updated my dictionary so that each key is paired with a list of values giving that key :
+But this method is not perfect, because the length of the dictionary afterward is only `10_606_955` which is far from `256³ = 16_777_216`, so I updated my dictionary so that each key is paired with a list of values giving that key :
 
 ```python
 rev_A = {}
@@ -303,7 +303,7 @@ def get_flag():
     return bytes(x)
 ```
 
-I added a print statement in the `rev` method of `_A` and `_B` to see if there is indeed an unicity problem and bingo :
+I added a print statement in the `rev` method of `_A` and `_B` to see if there is indeed a unicity problem and bingo :
 
 ```python
 In [1]: get_flag()
@@ -311,7 +311,7 @@ rev B : [b'L\x94\xdb']
 rev A : [b'y3^', b'\xa4Lf', b'\xe2\x83\x88']
 ```
 
-By tweaking the index of the element in the list given by `rev_A` I found out that it was the last one and I could get the flag :
+By tweaking the index of the element in the list given by `rev_A`, I found out that it was the last one, and I could get the flag :
 
 ```python
 In [3]: get_flag()
