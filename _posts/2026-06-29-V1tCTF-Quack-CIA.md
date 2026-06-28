@@ -1,7 +1,7 @@
 ---
 layout: post
 title: V1t CTF 2026 - Quack CIA
-date: 2026-06-30
+date: 2026-06-29
 description: OSINT leading to VIM undo file
 tags: writeups osint vim
 categories: writeups osint
